@@ -1,6 +1,5 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE Rank2Types #-}
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module      : Network.Socks5.Parse
@@ -72,24 +71,28 @@ newtype Parser a = Parser
     { runParser :: forall r . ByteString -> Failure r -> Success a r -> Result r }
 
 instance Monad Parser where
-    return v = Parser $ \buf _ ok -> ok buf v
     m >>= k = Parser $ \buf err ok ->
          runParser m buf err (\buf' a -> runParser (k a) buf' err ok)
+
 #if MIN_VERSION_base(4,13,0)
 instance MonadFail Parser where
 #endif
     fail errorMsg = Parser $ \buf err _ -> err buf ("failed: " ++ errorMsg)
+
 instance MonadPlus Parser where
     mzero = fail "Parser.MonadPlus.mzero"
     mplus f g = Parser $ \buf err ok ->
         -- rewrite the err callback of @f to call @g
         runParser f buf (\_ _ -> runParser g buf err ok) ok
+
 instance Functor Parser where
     fmap f p = Parser $ \buf err ok ->
         runParser p buf err (\b a -> ok b (f a))
+
 instance Applicative Parser where
-    pure      = return
+    pure v = Parser $ \buf _ ok -> ok buf v
     (<*>) d e = d >>= \b -> e >>= \a -> return (b a)
+
 instance Alternative Parser where
     empty = fail "Parser.Alternative.empty"
     (<|>) = mplus
@@ -105,7 +108,7 @@ parseFeed feeder p initial = loop $ parse p initial
 
 -- | Run a Parser on a ByteString and return a 'Result'
 parse :: Parser a -> ByteString -> Result a
-parse p s = runParser p s (\_ msg -> ParseFail msg) (\b a -> ParseOK b a)
+parse p s = runParser p s (\_ msg -> ParseFail msg) ParseOK
 
 ------------------------------------------------------------
 getMore :: Parser ()

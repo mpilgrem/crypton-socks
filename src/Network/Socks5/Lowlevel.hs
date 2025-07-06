@@ -5,6 +5,7 @@ module Network.Socks5.Lowlevel
     , module Network.Socks5.Command
     ) where
 
+import Data.Functor ( void )
 import Network.Socket
 import Network.Socks5.Command
 import Network.Socks5.Wire
@@ -12,7 +13,6 @@ import Network.Socks5.Types
 
 socksListen :: Socket -> IO SocksRequest
 socksListen sock = do
-    hello <- waitSerialized sock
-    case getSocksHelloMethods hello of
-        _ -> do sendSerialized sock (SocksHelloResponse SocksMethodNone)
-                waitSerialized sock
+  void (waitSerialized sock :: IO SocksHello)
+  sendSerialized sock (SocksHelloResponse SocksMethodNone)
+  waitSerialized sock

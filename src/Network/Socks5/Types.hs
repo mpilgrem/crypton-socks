@@ -19,13 +19,13 @@ module Network.Socks5.Types
 import qualified Basement.String as UTF8
 import           Basement.Compat.IsList
 import Data.ByteString (ByteString)
+import qualified Data.List as L
 import Data.Word
 import Data.Data
 import Network.Socket (HostAddress, HostAddress6, PortNumber)
 import Control.Exception
 import qualified Data.ByteString as B
 import Numeric (showHex)
-import Data.List (intersperse)
 
 -- | Socks Version
 data SocksVersion = SocksVer5
@@ -79,17 +79,17 @@ showHostAddress num = concat [show q1, ".", show q2, ".", show q3, ".", show q4]
 
 -- | Converts a IPv6 HostAddress6 to standard hex notation
 showHostAddress6 :: HostAddress6 -> String
-showHostAddress6 (a,b,c,d) =
-    (concat . intersperse ":" . map (flip showHex ""))
-        [p1,p2,p3,p4,p5,p6,p7,p8]
-    where (a',p2) = a `quotRem` 65536
-          (_,p1)  = a' `quotRem` 65536
-          (b',p4) = b `quotRem` 65536
-          (_,p3)  = b' `quotRem` 65536
-          (c',p6) = c `quotRem` 65536
-          (_,p5)  = c' `quotRem` 65536
-          (d',p8) = d `quotRem` 65536
-          (_,p7)  = d' `quotRem` 65536
+showHostAddress6 (a, b, c, d) =
+  (L.intercalate ":" . map (`showHex` "")) [p1, p2, p3, p4, p5, p6, p7, p8]
+ where
+  (a', p2) = a `quotRem` 65536
+  (_, p1)  = a' `quotRem` 65536
+  (b', p4) = b `quotRem` 65536
+  (_, p3)  = b' `quotRem` 65536
+  (c', p6) = c `quotRem` 65536
+  (_, p5)  = c' `quotRem` 65536
+  (d', p8) = d `quotRem` 65536
+  (_, p7)  = d' `quotRem` 65536
 
 -- | Describe a Socket address on the SOCKS protocol
 data SocksAddress = SocksAddress !SocksHostAddress !PortNumber

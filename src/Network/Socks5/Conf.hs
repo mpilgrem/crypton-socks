@@ -9,7 +9,7 @@
 module Network.Socks5.Conf
     ( SocksConf(..)
     , socksHost
-    , defaultSocksConf 
+    , defaultSocksConf
     , defaultSocksConfFromSockAddr
     ) where
 
@@ -27,7 +27,7 @@ data SocksConf = SocksConf
 
 -- | SOCKS Host
 socksHost :: SocksConf -> SockAddr
-socksHost conf = socksServer conf
+socksHost = socksServer
 
 -- | defaultSocksConf create a new record, making sure
 -- API remains compatible when the record is extended.

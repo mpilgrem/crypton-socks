@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Network.Socks5
 -- License     : BSD-style

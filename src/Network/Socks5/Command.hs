@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE CPP #-}
@@ -97,7 +96,8 @@ rpc_ socket req = rpc socket req >>= either throwIO return
 -- this function expect all the data to be consumed. this is fine for intertwined message,
 -- but might not be a good idea for multi messages from one party.
 runGetDone :: Serialize a => Get a -> IO ByteString -> IO a
-runGetDone getter ioget = ioget >>= return . runGetPartial getter >>= r where
+runGetDone getter ioget = ioget >>= r . runGetPartial getter
+  where
 #if MIN_VERSION_cereal(0,4,0)
     r (Fail s _)     = error s
 #else

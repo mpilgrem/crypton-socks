@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 -- |
 -- Module      : Network.Socks5.Wire
@@ -24,12 +23,12 @@ import Network.Socket (PortNumber)
 import Network.Socks5.Types
 
 -- | Initial message sent by client with the list of authentification methods supported
-data SocksHello = SocksHello { getSocksHelloMethods :: [SocksMethod] }
+newtype SocksHello = SocksHello { getSocksHelloMethods :: [SocksMethod] }
     deriving (Show,Eq)
 
 -- | Initial message send by server in return from Hello, with the
 -- server chosen method of authentication
-data SocksHelloResponse = SocksHelloResponse { getSocksHelloResponseMethod :: SocksMethod }
+newtype SocksHelloResponse = SocksHelloResponse { getSocksHelloResponseMethod :: SocksMethod }
     deriving (Show,Eq)
 
 -- | Define a SOCKS requests
@@ -48,7 +47,7 @@ data SocksResponse = SocksResponse
 
 getAddr 1 = SocksAddrIPV4 <$> getWord32host
 getAddr 3 = SocksAddrDomainName <$> (getLength8 >>= getByteString)
-getAddr 4 = SocksAddrIPV6 <$> (liftM4 (,,,) getWord32host getWord32host getWord32host getWord32host)
+getAddr 4 = SocksAddrIPV6 <$> liftM4 (,,,) getWord32host getWord32host getWord32host getWord32host
 getAddr n = error ("cannot get unknown socket address type: " <> show n)
 
 putAddr (SocksAddrIPV4 h)         = putWord8 1 >> putWord32host h
@@ -111,7 +110,7 @@ instance Serialize SocksRequest where
         putWord8 0
         putAddr $ requestDstAddr req
         putWord16be $ Prelude.fromIntegral $ requestDstPort req
-        
+
     get = getWord8 >>= getSocksRequest
 
 instance Serialize SocksResponse where
