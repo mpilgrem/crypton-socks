@@ -38,6 +38,8 @@ library
       Network.Socks5.Conf
       Network.Socks5.Parse
       Network.Socks5.Wire
+  hs-source-dirs:
+      src
   ghc-options: -Wall -fno-warn-missing-signatures -fwarn-tabs
   build-depends:
       base >=3 && <5

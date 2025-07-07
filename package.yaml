@@ -20,6 +20,7 @@ extra-doc-files:
 - Example.hs
 
 library:
+  source-dirs: src
   dependencies:
   - base >= 3 && < 5
   - basement
@@ -30,11 +31,6 @@ library:
   - Network.Socks5
   - Network.Socks5.Lowlevel
   - Network.Socks5.Types
-  other-modules:
-  - Network.Socks5.Command
-  - Network.Socks5.Conf
-  - Network.Socks5.Parse
-  - Network.Socks5.Wire
   ghc-options:
   - -Wall
   - -fno-warn-missing-signatures

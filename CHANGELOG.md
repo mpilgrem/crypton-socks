@@ -8,6 +8,8 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Move library modules to directory `src`.
+
 ## 0.6.1
 
 * Rename `socks-0.6.1` package as `crypton-socks-0.6.1`.
