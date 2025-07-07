@@ -8,10 +8,13 @@ and this project adheres to the
 
 ## UNRELEASED
 
-* Move library modules to directory `src`.
+* Move library modules to directory `src` and example application to directory
+  `example`.
 * Change data types `SocksHello` and `SocksHelloResponse` (each with a single,
   unary data constructor without strictness annotation) to `newtype`.
 * Add missing top-level signatures to library.
+* Name the example application `crypton-socks-example`, and move it being built
+  behind Cabal flag `example` (default: false).
 
 ## 0.6.1
 

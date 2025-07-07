@@ -17,20 +17,52 @@ homepage: http://github.com/mpilgrem/socks5
 extra-doc-files:
 - CHANGELOG.md
 - README.md
-- Example.hs
+
+flags:
+  example:
+    description: Build the example application.
+    manual: true
+    default: false
+
+  network-3-0-0-0:
+    description: >-
+      Use network-3.0.0.0 or later. If used the example application has a
+      dependency on network-bsd.
+    manual: false
+    default: true
 
 ghc-options:
 - -Wall
 
+dependencies:
+- base >= 3 && < 5
+- bytestring
+
 library:
   source-dirs: src
   dependencies:
-  - base >= 3 && < 5
   - basement
-  - bytestring
   - cereal >= 0.3.1
   - network >= 2.6
   exposed-modules:
   - Network.Socks5
   - Network.Socks5.Lowlevel
   - Network.Socks5.Types
+
+executables:
+  crypton-socks-example:
+    when:
+    - condition: "!flag(example)"
+      buildable: false
+    - condition: flag(network-3-0-0-0)
+      then:
+        dependencies:
+        - network >= 3.0.0.0
+        - network-bsd
+      else:
+        dependencies:
+        - network >= 2.6
+    source-dirs: example
+    main: Example.hs
+    dependencies:
+    - crypton-socks

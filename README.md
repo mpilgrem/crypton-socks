@@ -15,12 +15,13 @@ TODO
 Usage
 -----
 
-See Example.hs for really simple and straighforward example. The main api is only 2 calls:
+See `example/Example.hs` for a really simple and straighforward example. The
+main API is only two calls:
 
- * socksConnectAddr which connect to a SockAddr (SockAddrInet or SockAddrInet6).
-   The name resolution is left on client side.
- * socksConnectName which connect to a fully qualified domain name "www.example.com".
-   The proxy server will do the name resolution.
+* `socksConnectAddr` which connects to a `SockAddr` (`SockAddrInet` or
+  `SockAddrInet6`). The name resolution is left on the client side.
+* `socksConnectName` which connects to a fully qualified domain name
+  `www.example.com`. The proxy server will do the name resolution.
 
 History
 -------
