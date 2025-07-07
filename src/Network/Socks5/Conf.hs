@@ -37,4 +37,5 @@ defaultSocksConf host = SocksConf host SocksVer5
 -- | same as defaultSocksConf.
 --
 -- soft deprecation: use 'defaultSocksConf"
+defaultSocksConfFromSockAddr :: SockAddr -> SocksConf
 defaultSocksConfFromSockAddr = defaultSocksConf

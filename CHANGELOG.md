@@ -11,6 +11,7 @@ and this project adheres to the
 * Move library modules to directory `src`.
 * Change data types `SocksHello` and `SocksHelloResponse` (each with a single,
   unary data constructor without strictness annotation) to `newtype`.
+* Add missing top-level signatures to library.
 
 ## 0.6.1
 

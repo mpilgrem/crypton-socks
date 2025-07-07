@@ -34,5 +34,3 @@ library:
   - Network.Socks5
   - Network.Socks5.Lowlevel
   - Network.Socks5.Types
-  ghc-options:
-  - -Wno-missing-signatures
