@@ -1,4 +1,4 @@
-Name:                socks
+Name:                crypton-socks
 Version:             0.6.1
 Synopsis:            Socks proxy (ver 5)
 Description:         Socks proxy (version 5) implementation.
@@ -6,13 +6,13 @@ License:             BSD3
 License-file:        LICENSE
 Copyright:           Vincent Hanquez <vincent@snarc.org>
 Author:              Vincent Hanquez <vincent@snarc.org>
-Maintainer:          Vincent Hanquez <vincent@snarc.org>
+Maintainer:          Mike Pilgrem <public@pilgrem.com>, Kazu Yamamoto <kazu@iij.ad.jp>
 Build-Type:          Simple
 Category:            Network
 stability:           experimental
 Cabal-Version:       1.18
-Homepage:            http://github.com/vincenthz/hs-socks
-extra-doc-files:     README.md, Example.hs
+Homepage:            http://github.com/mpilgrem/socks5
+extra-doc-files:     README.md, Example.hs, CHANGELOG.md
 
 Library
   Build-Depends:     base >= 3 && < 5
@@ -32,4 +32,4 @@ Library
 
 source-repository head
   type: git
-  location: git://github.com/vincenthz/hs-socks
+  location: git://github.com/mpilgrem/socks5
