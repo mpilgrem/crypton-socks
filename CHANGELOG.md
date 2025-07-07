@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the
 [Haskell Package Versioning Policy](https://pvp.haskell.org/).
 
+## UNRELEASED
+
 ## 0.6.1
 
 * Rename `socks-0.6.1` package as `crypton-socks-0.6.1`.

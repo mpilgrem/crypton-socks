@@ -5,7 +5,7 @@ cabal-version: 1.18
 -- see: https://github.com/sol/hpack
 
 name:           crypton-socks
-version:        0.6.1
+version:        0.6.2
 synopsis:       Socks proxy (ver 5)
 description:    Socks proxy (version 5) implementation.
 category:       Network
