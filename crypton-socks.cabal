@@ -1,35 +1,48 @@
-Name:                crypton-socks
-Version:             0.6.1
-Synopsis:            Socks proxy (ver 5)
-Description:         Socks proxy (version 5) implementation.
-License:             BSD3
-License-file:        LICENSE
-Copyright:           Vincent Hanquez <vincent@snarc.org>
-Author:              Vincent Hanquez <vincent@snarc.org>
-Maintainer:          Mike Pilgrem <public@pilgrem.com>, Kazu Yamamoto <kazu@iij.ad.jp>
-Build-Type:          Simple
-Category:            Network
-stability:           experimental
-Cabal-Version:       1.18
-Homepage:            http://github.com/mpilgrem/socks5
-extra-doc-files:     README.md, Example.hs, CHANGELOG.md
+cabal-version: 1.18
 
-Library
-  Build-Depends:     base >= 3 && < 5
-                   , bytestring
-                   , cereal >= 0.3.1
-                   , network >= 2.6
-                   , basement
-  Exposed-modules:   Network.Socks5
-                     Network.Socks5.Lowlevel
-                     Network.Socks5.Types
-  Other-modules:     Network.Socks5.Wire
-                     Network.Socks5.Conf
-                     Network.Socks5.Command
-                     Network.Socks5.Parse
-  ghc-options:       -Wall -fno-warn-missing-signatures -fwarn-tabs
-  default-language:  Haskell2010
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           crypton-socks
+version:        0.6.1
+synopsis:       Socks proxy (ver 5)
+description:    Socks proxy (version 5) implementation.
+category:       Network
+stability:      experimental
+homepage:       http://github.com/mpilgrem/socks5
+bug-reports:    https://github.com/mpilgrem/socks5/issues
+author:         Vincent Hanquez <vincent@snarc.org>
+maintainer:     Mike Pilgrem <public@pilgrem.com>,
+                Kazu Yamamoto <kazu@iij.ad.jp>
+copyright:      Vincent Hanquez <vincent@snarc.org>
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-doc-files:
+    CHANGELOG.md
+    README.md
+    Example.hs
 
 source-repository head
   type: git
-  location: git://github.com/mpilgrem/socks5
+  location: https://github.com/mpilgrem/socks5
+
+library
+  exposed-modules:
+      Network.Socks5
+      Network.Socks5.Lowlevel
+      Network.Socks5.Types
+  other-modules:
+      Network.Socks5.Command
+      Network.Socks5.Conf
+      Network.Socks5.Parse
+      Network.Socks5.Wire
+  ghc-options: -Wall -fno-warn-missing-signatures -fwarn-tabs
+  build-depends:
+      base >=3 && <5
+    , basement
+    , bytestring
+    , cereal >=0.3.1
+    , network >=2.6
+  default-language: Haskell2010
