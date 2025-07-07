@@ -19,6 +19,9 @@ extra-doc-files:
 - README.md
 - Example.hs
 
+ghc-options:
+- -Wall
+
 library:
   source-dirs: src
   dependencies:
@@ -32,6 +35,4 @@ library:
   - Network.Socks5.Lowlevel
   - Network.Socks5.Types
   ghc-options:
-  - -Wall
-  - -fno-warn-missing-signatures
-  - -fwarn-tabs
+  - -Wno-missing-signatures
