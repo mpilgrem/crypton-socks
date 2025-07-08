@@ -15,7 +15,7 @@ module Network.Socks5.Conf
   , defaultSocksConfFromSockAddr
   ) where
 
-import           Network.Socket
+import           Network.Socket ( SockAddr )
 import           Network.Socks5.Types ( SocksVersion (..) )
 
 -- | SOCKS identification and configuration structure.

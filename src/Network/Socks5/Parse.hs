@@ -36,12 +36,12 @@ module Network.Socks5.Parse
   , takeStorable
   ) where
 
-import           Control.Applicative
-import           Control.Monad
+import           Control.Applicative ( Alternative (..) )
+import           Control.Monad ( MonadPlus (..) )
 import           Data.ByteString ( ByteString )
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Internal as B ( toForeignPtr )
-import           Data.Word
+import           Data.Word ( Word8 )
 import           Foreign.ForeignPtr ( withForeignPtr )
 import           Foreign.Storable ( Storable, peekByteOff, sizeOf )
 import           Prelude hiding ( take, takeWhile )
@@ -195,7 +195,7 @@ takeStorable = anyStorable undefined
     (fptr, off, _) <- B.toForeignPtr <$> take (sizeOf a)
     return $ unsafePerformIO $ withForeignPtr fptr $ \ptr -> peekByteOff ptr off
 
--- | Take @n bytes from the current position in the stream.
+-- | Take @n@ bytes from the current position in the stream.
 take :: Int -> Parser ByteString
 take n = Parser $ \buf err ok ->
   if B.length buf >= n

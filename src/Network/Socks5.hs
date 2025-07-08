@@ -34,17 +34,19 @@ module Network.Socks5
   , socksConnectName
   ) where
 
-import           Control.Exception
-import           Control.Monad
-import qualified Data.ByteString.Char8 as BC
+import           Control.Exception ( bracketOnError )
+import           Control.Monad ( when )
+import           Data.ByteString.Char8  ( pack )
 import           Network.Socket
                    ( close, Socket, SocketType(..), Family(..), socket, connect
                    , PortNumber, defaultProtocol
                    )
-import qualified Network.Socks5.Command as Cmd
-import           Network.Socks5.Conf
-import           Network.Socks5.Lowlevel
+import           Network.Socks5.Command ( Connect (..), establish, rpc_ )
+import           Network.Socks5.Conf ( SocksConf (..) )
 import           Network.Socks5.Types
+                   ( SocksAddress (..), SocksError (..), SocksHostAddress (..)
+                   , SocksMethod (..), SocksReply (..)
+                   )
 
 -- | Connect a user-specified new socket on the SOCKS server to a destination.
 --
@@ -59,10 +61,10 @@ socksConnectWithSocket ::
   -> SocksAddress -- ^ SOCKS Address to connect to.
   -> IO (SocksHostAddress, PortNumber)
 socksConnectWithSocket sock serverConf destAddr = do
-  r <- Cmd.establish (socksVersion serverConf) sock [SocksMethodNone]
+  r <- establish (socksVersion serverConf) sock [SocksMethodNone]
   when (r == SocksMethodNotAcceptable) $
     error "cannot connect with no socks method of authentication"
-  Cmd.rpc_ sock (Connect destAddr)
+  rpc_ sock (Connect destAddr)
 
 -- | Connect a new socket to a SOCKS server and connect the stream on the
 -- server side to the 'SocksAddress' specified.
@@ -89,4 +91,4 @@ socksConnectName sock sockConf destination port = do
   (_, _) <- socksConnectWithSocket sock sockConf addr
   return ()
  where
-  addr = SocksAddress (SocksAddrDomainName $ BC.pack destination) port
+  addr = SocksAddress (SocksAddrDomainName $ pack destination) port

@@ -1,5 +1,3 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-
 {- |
 Module      : Network.Socks5.Wire
 License     : BSD-style
@@ -15,14 +13,18 @@ module Network.Socks5.Wire
   , SocksResponse (..)
   ) where
 
-import           Basement.Compat.Base
-import           Control.Monad
+import           Control.Monad ( liftM4, replicateM )
 import qualified Data.ByteString as B
 import           Data.Serialize
+                   ( Get, Put, PutM (..), Serialize (..), getByteString
+                   , getWord16be, getWord32host, getWord8, putByteString
+                   , putWord16be, putWord32host, putWord8
+                   )
 import           Network.Socket ( PortNumber )
 import           Network.Socks5.Types
-import           Prelude ( Num )
-import qualified Prelude
+                   ( SocksCommand, SocksHostAddress (..), SocksMethod
+                   , SocksReply
+                   )
 
 -- | Initial message sent by client with the list of authentification methods
 -- supported.
@@ -69,23 +71,23 @@ putAddr (SocksAddrIPV6 (a, b, c, d)) =
   putWord8 4 >> mapM_ putWord32host [a,b,c,d]
 
 putEnum8 :: Enum e => e -> Put
-putEnum8 = putWord8 . Prelude.fromIntegral . fromEnum
+putEnum8 = putWord8 . fromIntegral . fromEnum
 
 getEnum8 :: Enum e => Get e
-getEnum8 = toEnum . Prelude.fromIntegral <$> getWord8
+getEnum8 = toEnum . fromIntegral <$> getWord8
 
 putLength8 :: Int -> Put
-putLength8 = putWord8 . Prelude.fromIntegral
+putLength8 = putWord8 . fromIntegral
 
 getLength8 :: Get Int
-getLength8 = Prelude.fromIntegral <$> getWord8
+getLength8 = fromIntegral <$> getWord8
 
 getSocksRequest :: (Eq a, Num a, Show a) => a -> Get SocksRequest
 getSocksRequest 5 = do
   cmd <- getEnum8
   _ <- getWord8
   addr <- getWord8 >>= getAddr
-  port <- Prelude.fromIntegral <$> getWord16be
+  port <- fromIntegral <$> getWord16be
   return $ SocksRequest cmd addr port
 getSocksRequest v =
   error ("unsupported version of the protocol " <> show v)
@@ -95,7 +97,7 @@ getSocksResponse 5 = do
   reply <- getEnum8
   _ <- getWord8
   addr <- getWord8 >>= getAddr
-  port <- Prelude.fromIntegral <$> getWord16be
+  port <- fromIntegral <$> getWord16be
   return $ SocksResponse reply addr port
 getSocksResponse v =
   error ("unsupported version of the protocol " <> show v)
@@ -103,7 +105,7 @@ getSocksResponse v =
 instance Serialize SocksHello where
   put (SocksHello ms) = do
     putWord8 5
-    putLength8 (Prelude.length ms)
+    putLength8 (length ms)
     mapM_ putEnum8 ms
   get = do
     v <- getWord8
@@ -125,7 +127,7 @@ instance Serialize SocksRequest where
     putEnum8 $ requestCommand req
     putWord8 0
     putAddr $ requestDstAddr req
-    putWord16be $ Prelude.fromIntegral $ requestDstPort req
+    putWord16be $ fromIntegral $ requestDstPort req
 
   get = getWord8 >>= getSocksRequest
 
@@ -135,5 +137,5 @@ instance Serialize SocksResponse where
     putEnum8 $ responseReply req
     putWord8 0
     putAddr $ responseBindAddr req
-    putWord16be $ Prelude.fromIntegral $ responseBindPort req
+    putWord16be $ fromIntegral $ responseBindPort req
   get = getWord8 >>= getSocksResponse

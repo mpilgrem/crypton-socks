@@ -1,4 +1,3 @@
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE ViewPatterns      #-}
 
@@ -24,17 +23,24 @@ module Network.Socks5.Command
   , waitSerialized
   ) where
 
-import           Basement.Compat.Base
+import           Control.Exception ( throwIO )
 import           Data.ByteString ( ByteString )
 import qualified Data.ByteString as B
-import qualified Data.ByteString.Char8 as BC
+import           Data.ByteString.Char8 ( pack )
 import           Data.Serialize
-import qualified Prelude
+                   ( Get, Result (..), Serialize (..), encode, runGetPartial )
 import           Network.Socket
                    ( HostAddress, HostAddress6, PortNumber, Socket )
-import           Network.Socket.ByteString
+import           Network.Socket.ByteString ( recv, sendAll )
 import           Network.Socks5.Types
+                   ( SocksAddress (..), SocksCommand (..), SocksError (..)
+                   , SocksHostAddress (..), SocksMethod (..), SocksReply (..)
+                   , SocksVersion (..)
+                   )
 import           Network.Socks5.Wire
+                   ( SocksHello (..), SocksHelloResponse (..)
+                   , SocksRequest (..), SocksResponse (..)
+                   )
 
 establish :: SocksVersion -> Socket -> [SocksMethod] -> IO SocksMethod
 establish SocksVer5 socket methods = do
@@ -56,7 +62,7 @@ instance Command Connect where
   toRequest (Connect (SocksAddress ha port)) = SocksRequest
     { requestCommand = SocksCommandConnect
     , requestDstAddr = ha
-    , requestDstPort = Prelude.fromIntegral port
+    , requestDstPort = fromIntegral port
     }
   fromRequest req
     | requestCommand req /= SocksCommandConnect = Nothing
@@ -93,7 +99,7 @@ connectDomainName ::
   -> PortNumber
   -> IO (SocksHostAddress, PortNumber)
 connectDomainName socket fqdn port =
-  rpc_ socket $ Connect $ SocksAddress (SocksAddrDomainName $ BC.pack fqdn) port
+  rpc_ socket $ Connect $ SocksAddress (SocksAddrDomainName $ pack fqdn) port
 
 sendSerialized :: Serialize a => Socket -> a -> IO ()
 sendSerialized sock a = sendAll sock $ encode a
@@ -113,7 +119,7 @@ rpc socket req = do
   onReply res@(responseReply -> reply) =
     case reply of
       SocksReplySuccess ->
-        Right (responseBindAddr res, Prelude.fromIntegral $ responseBindPort res)
+        Right (responseBindAddr res, fromIntegral $ responseBindPort res)
       SocksReplyError e -> Left e
 
 rpc_ :: Command a => Socket -> a -> IO (SocksHostAddress, PortNumber)

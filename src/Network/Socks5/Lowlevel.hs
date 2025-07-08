@@ -6,9 +6,9 @@ module Network.Socks5.Lowlevel
   ) where
 
 import           Data.Functor ( void )
-import           Network.Socket
+import           Network.Socket ( Socket )
 import           Network.Socks5.Command
-import           Network.Socks5.Types
+import           Network.Socks5.Types ( SocksMethod (..) )
 import           Network.Socks5.Wire
 
 socksListen :: Socket -> IO SocksRequest

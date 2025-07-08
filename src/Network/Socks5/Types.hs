@@ -19,20 +19,20 @@ module Network.Socks5.Types
   , SocksError (..)
   ) where
 
-import           Basement.Compat.IsList
 import qualified Basement.String as UTF8
-import           Control.Exception
+import           Control.Exception ( Exception )
 import           Data.ByteString ( ByteString )
 import qualified Data.ByteString as B
-import           Data.Data
+import           Data.Data ( Data, Typeable )
 import qualified Data.List as L
-import           Data.Word
+import           Data.Word ( Word8 )
+import           GHC.Exts ( IsList (..) )
 import           Network.Socket ( HostAddress, HostAddress6, PortNumber )
 import           Numeric ( showHex )
 
 -- | Socks Version.
 data SocksVersion = SocksVer5
-       deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 -- | Command that can be send and receive on the SOCKS protocol.
 data SocksCommand =
