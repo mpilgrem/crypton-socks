@@ -15,13 +15,16 @@ TODO
 Usage
 -----
 
-See `example/Example.hs` for a really simple and straighforward example. The
-main API is only two calls:
+See `example/Example.hs` for really simple and straighforward examples. The
+main API of the library is three functions:
 
-* `socksConnectAddr` which connects to a `SockAddr` (`SockAddrInet` or
-  `SockAddrInet6`). The name resolution is left on the client side.
-* `socksConnectName` which connects to a fully qualified domain name
-  `www.example.com`. The proxy server will do the name resolution.
+* `socksConnectWithSocket` which connects to a `SocksAddress` specifying a
+  `SocksHostAddress` (`SocksAddrIPV4`, `SocksAddrDomainName` or
+  `SocksAddrIPV6`). The name resolution is done on the client side.
+* `socksConnect` connects a new socket to a SOCKS server, with
+  `socksConnectWithSocket`.
+* `socksConnectName` which connects to a fully qualified domain name (FQDN) (for
+   example, `www.example.com`). The name resolution is done by the proxy server.
 
 History
 -------
