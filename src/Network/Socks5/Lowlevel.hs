@@ -1,15 +1,15 @@
 module Network.Socks5.Lowlevel
-    ( socksListen
+  ( socksListen
     -- * lowlevel types
-    , module Network.Socks5.Wire
-    , module Network.Socks5.Command
-    ) where
+  , module Network.Socks5.Wire
+  , module Network.Socks5.Command
+  ) where
 
-import Data.Functor ( void )
-import Network.Socket
-import Network.Socks5.Command
-import Network.Socks5.Wire
-import Network.Socks5.Types
+import           Data.Functor ( void )
+import           Network.Socket
+import           Network.Socks5.Command
+import           Network.Socks5.Types
+import           Network.Socks5.Wire
 
 socksListen :: Socket -> IO SocksRequest
 socksListen sock = do

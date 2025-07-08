@@ -1,61 +1,72 @@
 {-# LANGUAGE NoImplicitPrelude #-}
--- |
--- Module      : Network.Socks5.Wire
--- License     : BSD-style
--- Maintainer  : Vincent Hanquez <vincent@snarc.org>
--- Stability   : experimental
--- Portability : unknown
-module Network.Socks5.Wire
-    ( SocksHello(..)
-    , SocksHelloResponse(..)
-    , SocksRequest(..)
-    , SocksResponse(..)
-    ) where
 
-import Basement.Compat.Base
-import Control.Monad
+{- |
+Module      : Network.Socks5.Wire
+License     : BSD-style
+Maintainer  : Vincent Hanquez <vincent@snarc.org>
+Stability   : experimental
+Portability : unknown
+-}
+
+module Network.Socks5.Wire
+  ( SocksHello (..)
+  , SocksHelloResponse (..)
+  , SocksRequest (..)
+  , SocksResponse (..)
+  ) where
+
+import           Basement.Compat.Base
+import           Control.Monad
 import qualified Data.ByteString as B
-import Data.Serialize
-import Prelude ( Num )
+import           Data.Serialize
+import           Network.Socket ( PortNumber )
+import           Network.Socks5.Types
+import           Prelude ( Num )
 import qualified Prelude
 
-import Network.Socket (PortNumber)
+-- | Initial message sent by client with the list of authentification methods
+-- supported.
+newtype SocksHello = SocksHello
+  { getSocksHelloMethods :: [SocksMethod]
+  }
+  deriving (Eq, Show)
 
-import Network.Socks5.Types
+-- | Initial message send by server in return from Hello, with the server chosen
+-- method of authentication.
+newtype SocksHelloResponse = SocksHelloResponse
+  { getSocksHelloResponseMethod :: SocksMethod
+  }
+  deriving (Eq, Show)
 
--- | Initial message sent by client with the list of authentification methods supported
-newtype SocksHello = SocksHello { getSocksHelloMethods :: [SocksMethod] }
-    deriving (Show,Eq)
-
--- | Initial message send by server in return from Hello, with the
--- server chosen method of authentication
-newtype SocksHelloResponse = SocksHelloResponse { getSocksHelloResponseMethod :: SocksMethod }
-    deriving (Show,Eq)
-
--- | Define a SOCKS requests
+-- | Define a SOCKS request.
 data SocksRequest = SocksRequest
-    { requestCommand  :: SocksCommand
-    , requestDstAddr  :: SocksHostAddress
-    , requestDstPort  :: PortNumber
-    } deriving (Show,Eq)
+  { requestCommand :: SocksCommand
+  , requestDstAddr :: SocksHostAddress
+  , requestDstPort :: PortNumber
+  }
+  deriving (Eq, Show)
 
--- | Define a SOCKS response
+-- | Define a SOCKS response.
 data SocksResponse = SocksResponse
     { responseReply    :: SocksReply
     , responseBindAddr :: SocksHostAddress
     , responseBindPort :: PortNumber
-    } deriving (Show,Eq)
+    }
+    deriving (Eq, Show)
 
 getAddr :: (Eq a, Num a, Show a) => a -> Get SocksHostAddress
 getAddr 1 = SocksAddrIPV4 <$> getWord32host
 getAddr 3 = SocksAddrDomainName <$> (getLength8 >>= getByteString)
-getAddr 4 = SocksAddrIPV6 <$> liftM4 (,,,) getWord32host getWord32host getWord32host getWord32host
+getAddr 4 = SocksAddrIPV6 <$>
+  liftM4 (,,,) getWord32host getWord32host getWord32host getWord32host
 getAddr n = error ("cannot get unknown socket address type: " <> show n)
 
 putAddr :: SocksHostAddress -> PutM ()
-putAddr (SocksAddrIPV4 h)         = putWord8 1 >> putWord32host h
-putAddr (SocksAddrDomainName b)   = putWord8 3 >> putLength8 (B.length b) >> putByteString b
-putAddr (SocksAddrIPV6 (a,b,c,d)) = putWord8 4 >> mapM_ putWord32host [a,b,c,d]
+putAddr (SocksAddrIPV4 h) = putWord8 1 >> putWord32host h
+putAddr (SocksAddrDomainName b) =
+  putWord8 3 >> putLength8 (B.length b) >> putByteString b
+putAddr (SocksAddrIPV6 (a, b, c, d)) =
+  putWord8 4 >> mapM_ putWord32host [a,b,c,d]
 
 putEnum8 :: Enum e => e -> Put
 putEnum8 = putWord8 . Prelude.fromIntegral . fromEnum
@@ -71,58 +82,58 @@ getLength8 = Prelude.fromIntegral <$> getWord8
 
 getSocksRequest :: (Eq a, Num a, Show a) => a -> Get SocksRequest
 getSocksRequest 5 = do
-    cmd <- getEnum8
-    _   <- getWord8
-    addr <- getWord8 >>= getAddr
-    port <- Prelude.fromIntegral <$> getWord16be
-    return $ SocksRequest cmd addr port
+  cmd <- getEnum8
+  _ <- getWord8
+  addr <- getWord8 >>= getAddr
+  port <- Prelude.fromIntegral <$> getWord16be
+  return $ SocksRequest cmd addr port
 getSocksRequest v =
-    error ("unsupported version of the protocol " <> show v)
+  error ("unsupported version of the protocol " <> show v)
 
 getSocksResponse :: (Eq a, Num a, Show a) => a -> Get SocksResponse
 getSocksResponse 5 = do
-    reply <- getEnum8
-    _     <- getWord8
-    addr <- getWord8 >>= getAddr
-    port <- Prelude.fromIntegral <$> getWord16be
-    return $ SocksResponse reply addr port
+  reply <- getEnum8
+  _ <- getWord8
+  addr <- getWord8 >>= getAddr
+  port <- Prelude.fromIntegral <$> getWord16be
+  return $ SocksResponse reply addr port
 getSocksResponse v =
-    error ("unsupported version of the protocol " <> show v)
+  error ("unsupported version of the protocol " <> show v)
 
 instance Serialize SocksHello where
-    put (SocksHello ms) = do
-        putWord8 5
-        putLength8 (Prelude.length ms)
-        mapM_ putEnum8 ms
-    get = do
-        v <- getWord8
-        case v of
-            5 -> SocksHello <$> (getLength8 >>= flip replicateM getEnum8)
-            _ -> error "unsupported sock hello version"
+  put (SocksHello ms) = do
+    putWord8 5
+    putLength8 (Prelude.length ms)
+    mapM_ putEnum8 ms
+  get = do
+    v <- getWord8
+    case v of
+      5 -> SocksHello <$> (getLength8 >>= flip replicateM getEnum8)
+      _ -> error "unsupported sock hello version"
 
 instance Serialize SocksHelloResponse where
-    put (SocksHelloResponse m) = putWord8 5 >> putEnum8 m
-    get = do
-        v <- getWord8
-        case v of
-            5 -> SocksHelloResponse <$> getEnum8
-            _ -> error "unsupported sock hello response version"
+  put (SocksHelloResponse m) = putWord8 5 >> putEnum8 m
+  get = do
+    v <- getWord8
+    case v of
+      5 -> SocksHelloResponse <$> getEnum8
+      _ -> error "unsupported sock hello response version"
 
 instance Serialize SocksRequest where
-    put req = do
-        putWord8 5
-        putEnum8 $ requestCommand req
-        putWord8 0
-        putAddr $ requestDstAddr req
-        putWord16be $ Prelude.fromIntegral $ requestDstPort req
+  put req = do
+    putWord8 5
+    putEnum8 $ requestCommand req
+    putWord8 0
+    putAddr $ requestDstAddr req
+    putWord16be $ Prelude.fromIntegral $ requestDstPort req
 
-    get = getWord8 >>= getSocksRequest
+  get = getWord8 >>= getSocksRequest
 
 instance Serialize SocksResponse where
-    put req = do
-        putWord8 5
-        putEnum8 $ responseReply req
-        putWord8 0
-        putAddr $ responseBindAddr req
-        putWord16be $ Prelude.fromIntegral $ responseBindPort req
-    get = getWord8 >>= getSocksResponse
+  put req = do
+    putWord8 5
+    putEnum8 $ responseReply req
+    putWord8 0
+    putAddr $ responseBindAddr req
+    putWord16be $ Prelude.fromIntegral $ responseBindPort req
+  get = getWord8 >>= getSocksResponse
