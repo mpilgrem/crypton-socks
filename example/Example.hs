@@ -1,13 +1,22 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Data.ByteString.Char8 ()
-import qualified Data.ByteString.Char8 as BC
-import           Network.BSD
-import           Network.Socket hiding ( close )
-import           Network.Socket ( close )
-import           Network.Socket.ByteString
+module Main
+  ( main
+  ) where
+
+import           Data.ByteString.Char8 ( pack )
+import           Network.BSD ( getHostByName, hostAddresses )
+import           Network.Socket
+                   ( Family (..), SockAddr (..), SocketType (..), close
+                   , defaultProtocol
+                   )
+import qualified Network.Socket as Network
+import           Network.Socket.ByteString ( recv, sendAll )
 import           Network.Socks5
-import           System.Environment (getArgs)
+                   ( SocksAddress (..), SocksHostAddress (..), defaultSocksConf
+                   , socksConnect, socksConnectName
+                   )
+import           System.Environment ( getArgs )
 
 main :: IO ()
 main = do
@@ -30,18 +39,18 @@ main = do
   -- gets resolved on the client here and then the sockaddr is passed to
   -- socksConnectAddr.
   example1 socksServerAddr destName = do
-    (socket', _) <- socksConnect
+    (socket, _) <- socksConnect
       (defaultSocksConf socksServerAddr)
-      (SocksAddress (SocksAddrDomainName $ BC.pack destName) 80)
-    sendAll socket' "GET / HTTP/1.0\r\n\r\n"
-    recv socket' 4096 >>= print
-    close socket'
+      (SocksAddress (SocksAddrDomainName $ pack destName) 80)
+    sendAll socket "GET / HTTP/1.0\r\n\r\n"
+    recv socket 4096 >>= print
+    close socket
 
   -- Connect to @destName on port 80 through the SOCKS server. The server is
   -- doing the resolution itself.
   example2 socksServerAddr destName = do
-    socket' <- socket AF_INET Stream defaultProtocol
-    socksConnectName socket' (defaultSocksConf socksServerAddr) destName 80
-    sendAll socket' "GET / HTTP/1.0\r\n\r\n"
-    recv socket' 4096 >>= print
-    close socket'
+    socket <- Network.socket AF_INET Stream defaultProtocol
+    socksConnectName socket (defaultSocksConf socksServerAddr) destName 80
+    sendAll socket "GET / HTTP/1.0\r\n\r\n"
+    recv socket 4096 >>= print
+    close socket
