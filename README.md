@@ -10,7 +10,6 @@ TODO
 
  * more socks authentification methods: only no authentification is supported for now.
  * support of socks' bind for server to client connection (like FTP).
- * add socks4a and socks4 support.
 
 Usage
 -----
