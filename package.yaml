@@ -12,8 +12,8 @@ maintainer:
 - Kazu Yamamoto <kazu@iij.ad.jp>
 category: Network
 stability: experimental
-github: mpilgrem/socks5
-homepage: http://github.com/mpilgrem/socks5
+github: mpilgrem/crypton-socks
+homepage: http://github.com/mpilgrem/crypton-socks
 extra-doc-files:
 - CHANGELOG.md
 - README.md

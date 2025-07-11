@@ -10,8 +10,8 @@ synopsis:       SOCKS Protocol Version 5
 description:    A library implementing SOCKS Protocol Version 5.
 category:       Network
 stability:      experimental
-homepage:       http://github.com/mpilgrem/socks5
-bug-reports:    https://github.com/mpilgrem/socks5/issues
+homepage:       http://github.com/mpilgrem/crypton-socks
+bug-reports:    https://github.com/mpilgrem/crypton-socks/issues
 author:         Vincent Hanquez <vincent@snarc.org>
 maintainer:     Mike Pilgrem <public@pilgrem.com>,
                 Kazu Yamamoto <kazu@iij.ad.jp>
@@ -25,7 +25,7 @@ extra-doc-files:
 
 source-repository head
   type: git
-  location: https://github.com/mpilgrem/socks5
+  location: https://github.com/mpilgrem/crypton-socks
 
 flag example
   description: Build the example application.
