@@ -76,8 +76,10 @@ socksConnectWithSocket sock serverConf destAddr = do
 -- | Connect a new socket to a SOCKS server and connect the stream on the
 -- server side to the specified SOCKS address.
 socksConnect ::
-     SocksConf    -- ^ The SOCKS configuration for the server.
-  -> SocksAddress -- ^ The SOCKS address to connect to.
+     SocksConf
+     -- ^ The SOCKS configuration for the server.
+  -> SocksAddress
+     -- ^ The SOCKS address to connect to.
   -> IO (Socket, (SocksHostAddress, PortNumber))
 socksConnect serverConf destAddr =
   bracketOnError (socket AF_INET Stream defaultProtocol) close $ \sock -> do
@@ -97,6 +99,7 @@ socksConnectName ::
      -- unexpected behaviour will ensure. For FQDN including other Unicode code
      -- points, Punycode encoding should be used.
   -> PortNumber
+     -- ^ The port number to use.
   -> IO ()
 socksConnectName sock sockConf destination port = do
   connect sock (socksServer sockConf)

@@ -28,17 +28,23 @@ import           Data.Word ( Word8 )
 import           Network.Socket ( HostAddress, HostAddress6, PortNumber )
 import           Numeric ( showHex )
 
--- | The SOCKS Protocol Version.
-data SocksVersion = SocksVer5
+-- | Type representing SOCKS protocol versions.
+data SocksVersion =
+    SocksVer5
+    -- ^ SOCKS Protocol Version 5. The only version implemented by the library.
   deriving (Eq, Ord, Show)
 
 -- | Type representing commands that can be sent or received under the SOCKS
 -- protocol.
 data SocksCommand =
     SocksCommandConnect
+    -- ^ The CONNECT request.
   | SocksCommandBind
+    -- ^ The BIND request. Not implemented by the library.
   | SocksCommandUdpAssociate
+    -- ^ The UDP ASSOCIATE request. Not implemented by the library.
   | SocksCommandOther !Word8
+    -- ^ Other requests. None are specified by the SOCKS Protocol Version 5.
   deriving (Eq, Ord, Show)
 
 -- | Type representing authentication methods available under the SOCKS
@@ -48,17 +54,25 @@ data SocksCommand =
 -- enumerated for completeness.
 data SocksMethod =
     SocksMethodNone
+    -- ^ NO AUTHENTICATION REQUIRED.
   | SocksMethodGSSAPI
+    -- ^ GSSAPI.
   | SocksMethodUsernamePassword
+    -- ^ USERNAME/PASSWORD.
   | SocksMethodOther !Word8
+    -- ^ IANA ASSIGNED or RESERVED FOR PRIVATE METHODS.
   | SocksMethodNotAcceptable
+    -- ^ NO ACCEPTABLE METHODS.
   deriving (Eq, Ord, Show)
 
 -- | Type representing host addresses under the SOCKS protocol.
 data SocksHostAddress =
     SocksAddrIPV4 !HostAddress
+    -- ^ A version-4 IP address.
   | SocksAddrDomainName !SocksFQDN
+    -- ^ A fully-qualified domain name (FQDN).
   | SocksAddrIPV6 !HostAddress6
+    -- ^ A version-6 IP address.
   deriving (Eq, Ord)
 
 -- | Type synonym representing fully-qualified domain names (FQDN). The SOCKS
@@ -110,20 +124,31 @@ data SocksAddress = SocksAddress !SocksHostAddress !PortNumber
 -- | Type representing replies under the SOCKS protocol.
 data SocksReply =
     SocksReplySuccess
+    -- ^ The server reports that the request succeeded.
   | SocksReplyError SocksError
+    -- ^ The server reports that the request did not succeed.
   deriving (Eq, Data, Ord, Show, Typeable)
 
--- | Type representing SOCKS errors that can be received or sent.
+-- | Type representing SOCKS errors that can be part of a SOCKS reply.
 data SocksError =
     SocksErrorGeneralServerFailure
+    -- ^ General SOCKS server failure.
   | SocksErrorConnectionNotAllowedByRule
+    -- ^ Connection not allowed by ruleset.
   | SocksErrorNetworkUnreachable
+    -- ^ Network unreachable.
   | SocksErrorHostUnreachable
+    -- ^ Host unreachable.
   | SocksErrorConnectionRefused
+    -- ^ Connection refused.
   | SocksErrorTTLExpired
+    -- ^ TTL expired.
   | SocksErrorCommandNotSupported
+    -- ^ Command not supported.
   | SocksErrorAddrTypeNotSupported
+    -- ^ Address type not supported.
   | SocksErrorOther Word8
+    -- ^ Other error. Unassigned in SOCKS Protocol Version 5.
   deriving (Eq, Data, Ord, Show, Typeable)
 
 -- | Type representing exceptions.

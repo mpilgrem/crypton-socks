@@ -29,7 +29,10 @@ data SocksConf = SocksConf
   }
 
 -- | Yield the socket address of the server from the specified configuration.
-socksHost :: SocksConf -> SockAddr
+socksHost ::
+     SocksConf
+     -- ^ The configuration.
+  -> SockAddr
 socksHost = socksServer
 
 -- | Yield a configuration given the specified socket addresss.
