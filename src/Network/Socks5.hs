@@ -26,7 +26,10 @@ module Network.Socks5
   , SocksReply (..)
   , SocksError (..)
     -- * Configuration
-  , module Network.Socks5.Conf
+  , SocksConf (..)
+  , socksHost
+  , defaultSocksConf
+  , defaultSocksConfFromSockAddr
     -- * Methods
   , socksConnectWithSocket
   , socksConnect
@@ -42,7 +45,10 @@ import           Network.Socket
                    , PortNumber, defaultProtocol
                    )
 import           Network.Socks5.Command ( Connect (..), establish, rpc_ )
-import           Network.Socks5.Conf ( SocksConf (..) )
+import           Network.Socks5.Conf
+                   ( SocksConf (..), defaultSocksConf
+                   , defaultSocksConfFromSockAddr, socksHost
+                   )
 import           Network.Socks5.Types
                    ( SocksAddress (..), SocksError (..), SocksHostAddress (..)
                    , SocksMethod (..), SocksReply (..)
