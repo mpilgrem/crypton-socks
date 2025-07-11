@@ -52,7 +52,6 @@ library
   ghc-options: -Wall
   build-depends:
       base >=3 && <5
-    , basement
     , bytestring
     , cereal >=0.3.1
     , network >=2.6
