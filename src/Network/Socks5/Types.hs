@@ -17,16 +17,14 @@ module Network.Socks5.Types
   , SocksReply (..)
   , SocksVersionNotSupported (..)
   , SocksError (..)
+  , FQDN
   ) where
 
-import qualified Basement.String as UTF8
 import           Control.Exception ( Exception )
 import           Data.ByteString ( ByteString )
-import qualified Data.ByteString as B
 import           Data.Data ( Data, Typeable )
 import qualified Data.List as L
 import           Data.Word ( Word8 )
-import           GHC.Exts ( IsList (..) )
 import           Network.Socket ( HostAddress, HostAddress6, PortNumber )
 import           Numeric ( showHex )
 
@@ -79,7 +77,7 @@ instance Show SocksHostAddress where
 
 -- | Converts the specified fully-qualified domain name (FQDN) to a 'String'.
 showFQDN :: FQDN -> String
-showFQDN bs = toList $ fst $ UTF8.fromBytesLenient $ fromList $ B.unpack bs
+showFQDN = show
 
 -- | Converts the specified SOCKS host address to a 'String' in dot-decimal
 -- notation.

@@ -41,7 +41,6 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-  - basement
   - cereal >= 0.3.1
   - network >= 2.6
   exposed-modules:
