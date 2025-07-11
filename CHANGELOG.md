@@ -15,9 +15,10 @@ and this project adheres to the
 * Add missing top-level signatures to library.
 * Name the example application `crypton-socks-example`, and move it being built
   behind Cabal flag `example` (default: false).
-* Export the `FQDN` type synonym, representing fully-qualified domain names. The
-  API assumes that such values comprise only ASCII characters. Domain names that
-  include other Unicode code points should be Punycode encoded.
+* Export the `SocksFQDN` type synonym, representing fully-qualified domain names
+  (FQDN) under the SOCKS Protocol Version 5. The API assumes that such values
+  comprise only ASCII characters. Domain names that include other Unicode code
+  points should be Punycode encoded.
 * Remove dependency on the `basement` package.
 
 ## 0.6.1

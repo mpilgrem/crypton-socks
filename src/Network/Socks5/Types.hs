@@ -17,7 +17,7 @@ module Network.Socks5.Types
   , SocksReply (..)
   , SocksVersionNotSupported (..)
   , SocksError (..)
-  , FQDN
+  , SocksFQDN
   ) where
 
 import           Control.Exception ( Exception )
@@ -57,18 +57,18 @@ data SocksMethod =
 -- | Type representing host addresses under the SOCKS protocol.
 data SocksHostAddress =
     SocksAddrIPV4 !HostAddress
-  | SocksAddrDomainName !FQDN
+  | SocksAddrDomainName !SocksFQDN
   | SocksAddrIPV6 !HostAddress6
   deriving (Eq, Ord)
 
 -- | Type synonym representing fully-qualified domain names (FQDN). The SOCKS
--- Protocol Version 5 does not specify an encoding for the FQDN other than there
+-- Protocol Version 5 does not specify an encoding for a FQDN other than there
 -- is no terminating @NUL@ octet (byte).
 --
 -- This library's API assumes that FQDN values comprise only ASCII characters.
 -- Domain names that include other Unicode code points should be
 -- Punycode encoded.
-type FQDN = ByteString
+type SocksFQDN = ByteString
 
 instance Show SocksHostAddress where
   show (SocksAddrIPV4 ha) = "SocksAddrIPV4(" ++ showHostAddress ha ++ ")"
@@ -76,7 +76,7 @@ instance Show SocksHostAddress where
   show (SocksAddrDomainName dn) = "SocksAddrDomainName(" ++ showFQDN dn ++ ")"
 
 -- | Converts the specified fully-qualified domain name (FQDN) to a 'String'.
-showFQDN :: FQDN -> String
+showFQDN :: SocksFQDN -> String
 showFQDN = show
 
 -- | Converts the specified SOCKS host address to a 'String' in dot-decimal
