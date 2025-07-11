@@ -5,12 +5,6 @@ Originally forked from [socks-0.6.1](https://hackage.haskell.org/package/socks-0
 
 Haskell library implementing the SOCKS Protocol Version 5.
 
-TODO
-----
-
- * more socks authentification methods: only no authentification is supported for now.
- * support of socks' bind for server to client connection (like FTP).
-
 Usage
 -----
 
