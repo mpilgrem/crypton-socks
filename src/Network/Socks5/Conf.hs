@@ -18,22 +18,25 @@ module Network.Socks5.Conf
 import           Network.Socket ( SockAddr )
 import           Network.Socks5.Types ( SocksVersion (..) )
 
--- | SOCKS identification and configuration structure.
+-- | Type representing SOCKS identification and configuration structures.
 --
--- This structure will be extended in future to support authentification.
--- Use 'defaultSocksConf' to create new record.
+-- The data constructors may be extended in the future to support
+-- authentification. Use the smart constructor 'defaultSocksConf'
+-- and 'socksHost'.
 data SocksConf = SocksConf
-  { socksServer  :: SockAddr     -- ^ Address of server.
-  , socksVersion :: SocksVersion -- ^ SOCKS version to use.
+  { socksServer  :: SockAddr     -- ^ The address of the server.
+  , socksVersion :: SocksVersion -- ^ The SOCKS protocol version to use.
   }
 
--- | SOCKS Host.
+-- | Yield the socket address of the server from the specified configuration.
 socksHost :: SocksConf -> SockAddr
 socksHost = socksServer
 
--- | Create a new record, making sure the API remains compatible when the record
--- is extended.
-defaultSocksConf :: SockAddr -> SocksConf
+-- | Yield a configuration given the specified socket addresss.
+defaultSocksConf ::
+     SockAddr
+     -- ^ The address of the server.
+  -> SocksConf
 defaultSocksConf host = SocksConf host SocksVer5
 
 -- | Same as 'defaultSocksConf'.

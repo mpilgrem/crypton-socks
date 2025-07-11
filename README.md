@@ -3,7 +3,7 @@ crypton-socks
 
 Originally forked from [socks-0.6.1](https://hackage.haskell.org/package/socks-0.6.1).
 
-Haskell library implementation of the SOCKS 5 protocol.
+Haskell library implementing the SOCKS Protocol Version 5.
 
 TODO
 ----

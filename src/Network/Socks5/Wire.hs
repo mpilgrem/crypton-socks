@@ -26,21 +26,21 @@ import           Network.Socks5.Types
                    , SocksReply
                    )
 
--- | Initial message sent by client with the list of authentification methods
--- supported.
+-- | Type representing initial messages sent by a client with the list of
+-- authentification methods supported.
 newtype SocksHello = SocksHello
   { getSocksHelloMethods :: [SocksMethod]
   }
   deriving (Eq, Show)
 
--- | Initial message send by server in return from Hello, with the server chosen
--- method of authentication.
+-- | Type representing initial messages sent by a server in response to Hello,
+-- with the server's chosen method of authentication.
 newtype SocksHelloResponse = SocksHelloResponse
   { getSocksHelloResponseMethod :: SocksMethod
   }
   deriving (Eq, Show)
 
--- | Define a SOCKS request.
+-- | Type representing SOCKS requests.
 data SocksRequest = SocksRequest
   { requestCommand :: SocksCommand
   , requestDstAddr :: SocksHostAddress
@@ -48,7 +48,7 @@ data SocksRequest = SocksRequest
   }
   deriving (Eq, Show)
 
--- | Define a SOCKS response.
+-- | Type representing SOCKS responses.
 data SocksResponse = SocksResponse
     { responseReply    :: SocksReply
     , responseBindAddr :: SocksHostAddress

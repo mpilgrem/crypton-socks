@@ -42,14 +42,25 @@ import           Network.Socks5.Wire
                    , SocksRequest (..), SocksResponse (..)
                    )
 
-establish :: SocksVersion -> Socket -> [SocksMethod] -> IO SocksMethod
+-- | Establish a connection with a SOCKS server.
+establish ::
+     SocksVersion
+     -- ^ The SOCKS protocol version to use.
+  -> Socket
+     -- ^ The socket to use.
+  -> [SocksMethod]
+     -- ^ A list of the authentification methods supported.
+  -> IO SocksMethod
 establish SocksVer5 socket methods = do
   sendAll socket (encode $ SocksHello methods)
   getSocksHelloResponseMethod <$> runGetDone get (recv socket 4096)
 
+-- | Type representing connect commands.
 newtype Connect = Connect SocksAddress
   deriving (Eq, Ord, Show)
 
+-- | A type class for types that can yield a SOCKS request or, optionally, be
+-- obtained from a SOCKS request.
 class Command a where
   toRequest   :: a -> SocksRequest
   fromRequest :: SocksRequest -> Maybe a
@@ -69,10 +80,14 @@ instance Command Connect where
     | otherwise = Just $
         Connect $ SocksAddress (requestDstAddr req) (requestDstPort req)
 
+-- | Connect using IPv4.
 connectIPV4 ::
      Socket
+     -- ^ The socket to use.
   -> HostAddress
+     -- ^ The host address.
   -> PortNumber
+     -- ^ The port number to use.
   -> IO (HostAddress, PortNumber)
 connectIPV4 socket hostaddr port = onReply <$>
   rpc_ socket (Connect $ SocksAddress (SocksAddrIPV4 hostaddr) port)
@@ -80,10 +95,14 @@ connectIPV4 socket hostaddr port = onReply <$>
   onReply (SocksAddrIPV4 h, p) = (h, p)
   onReply _                    = error "ipv4 requested, got something different"
 
+-- | Connect using IPv6.
 connectIPV6 ::
      Socket
+     -- ^ The socket to use.
   -> HostAddress6
+     -- ^ The host address.
   -> PortNumber
+     -- ^ The port number to use.
   -> IO (HostAddress6, PortNumber)
 connectIPV6 socket hostaddr6 port = onReply <$>
   rpc_ socket (Connect $ SocksAddress (SocksAddrIPV6 hostaddr6) port)
@@ -91,26 +110,48 @@ connectIPV6 socket hostaddr6 port = onReply <$>
   onReply (SocksAddrIPV6 h, p) = (h, p)
   onReply _                    = error "ipv6 requested, got something different"
 
+-- | Connect using a fully-qualified domain name (FQDN).
+
 -- TODO: FQDN should only be ascii, maybe putting a "fqdn" data type in front to
 -- make sure and make the BC.pack safe.
 connectDomainName ::
      Socket
-  -> [Char]
-  -> PortNumber
+     -- ^ The socket to use.
+  -> String
+      -- ^ Destination FQDN. Should comprise only ASCII characters, otherwise
+     -- unexpected behaviour will ensure. For FQDN including other Unicode code
+     -- points, Punycode encoding should be used.
+    -> PortNumber
+     -- ^ The port number to use.
   -> IO (SocksHostAddress, PortNumber)
 connectDomainName socket fqdn port =
   rpc_ socket $ Connect $ SocksAddress (SocksAddrDomainName $ pack fqdn) port
 
-sendSerialized :: Serialize a => Socket -> a -> IO ()
+-- | Send data to the specified socket.
+sendSerialized ::
+     Serialize a
+  => Socket
+     -- ^ The socket to use.
+  -> a
+     -- ^ The data.
+  -> IO ()
 sendSerialized sock a = sendAll sock $ encode a
 
-waitSerialized :: Serialize a => Socket -> IO a
+-- | Wait for data from the specified socket.
+waitSerialized ::
+     Serialize a
+  => Socket
+     -- ^ The socket to use.
+  -> IO a
 waitSerialized sock = runGetDone get (getMore sock)
 
+-- | Try to execute the specified command with the specified socket.
 rpc ::
      Command a
   => Socket
+     -- ^ The socket to use.
   -> a
+     -- ^ The command.
   -> IO (Either SocksError (SocksHostAddress, PortNumber))
 rpc socket req = do
   sendSerialized socket (toRequest req)
@@ -122,7 +163,14 @@ rpc socket req = do
         Right (responseBindAddr res, fromIntegral $ responseBindPort res)
       SocksReplyError e -> Left e
 
-rpc_ :: Command a => Socket -> a -> IO (SocksHostAddress, PortNumber)
+-- | As for 'rpc' but throws an exception if it does not succeed.
+rpc_ ::
+     Command a
+  => Socket
+     -- ^ The socket to use.
+  -> a
+     -- ^ The command.
+  -> IO (SocksHostAddress, PortNumber)
 rpc_ socket req = rpc socket req >>= either throwIO return
 
 -- This function expects all the data to be consumed. This is fine for

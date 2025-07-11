@@ -30,11 +30,12 @@ import           GHC.Exts ( IsList (..) )
 import           Network.Socket ( HostAddress, HostAddress6, PortNumber )
 import           Numeric ( showHex )
 
--- | Socks Version.
+-- | The SOCKS Protocol Version.
 data SocksVersion = SocksVer5
   deriving (Eq, Ord, Show)
 
--- | Command that can be send and receive on the SOCKS protocol.
+-- | Type representing commands that can be sent or received under the SOCKS
+-- protocol.
 data SocksCommand =
     SocksCommandConnect
   | SocksCommandBind
@@ -42,7 +43,8 @@ data SocksCommand =
   | SocksCommandOther !Word8
   deriving (Eq, Ord, Show)
 
--- | Authentication methods available on the SOCKS protocol.
+-- | Type representing authentication methods available under the SOCKS
+-- protocol.
 --
 -- Only 'SocksMethodNone' is effectively implemented, but other values are
 -- enumerated for completeness.
@@ -54,13 +56,20 @@ data SocksMethod =
   | SocksMethodNotAcceptable
   deriving (Eq, Ord, Show)
 
--- | A Host address on the SOCKS protocol.
+-- | Type representing host addresses under the SOCKS protocol.
 data SocksHostAddress =
     SocksAddrIPV4 !HostAddress
   | SocksAddrDomainName !FQDN
   | SocksAddrIPV6 !HostAddress6
   deriving (Eq, Ord)
 
+-- | Type synonym representing fully-qualified domain names (FQDN). The SOCKS
+-- Protocol Version 5 does not specify an encoding for the FQDN other than there
+-- is no terminating @NUL@ octet (byte).
+--
+-- This library's API assumes that FQDN values comprise only ASCII characters.
+-- Domain names that include other Unicode code points should be
+-- Punycode encoded.
 type FQDN = ByteString
 
 instance Show SocksHostAddress where
@@ -68,11 +77,12 @@ instance Show SocksHostAddress where
   show (SocksAddrIPV6 ha6) = "SocksAddrIPV6(" ++ showHostAddress6 ha6 ++ ")"
   show (SocksAddrDomainName dn) = "SocksAddrDomainName(" ++ showFQDN dn ++ ")"
 
--- | Converts a FQDN to a String.
+-- | Converts the specified fully-qualified domain name (FQDN) to a 'String'.
 showFQDN :: FQDN -> String
 showFQDN bs = toList $ fst $ UTF8.fromBytesLenient $ fromList $ B.unpack bs
 
--- | Converts a HostAddress to a String in dot-decimal notation.
+-- | Converts the specified SOCKS host address to a 'String' in dot-decimal
+-- notation.
 showHostAddress :: HostAddress -> String
 showHostAddress num = concat [show q1, ".", show q2, ".", show q3, ".", show q4]
  where
@@ -81,7 +91,7 @@ showHostAddress num = concat [show q1, ".", show q2, ".", show q3, ".", show q4]
   (num''', q3) = num'' `quotRem` 256
   (_, q4)      = num''' `quotRem` 256
 
--- | Converts a IPv6 HostAddress6 to standard hex notation.
+-- | Converts the specified IPv6 host address to standard hex notation.
 showHostAddress6 :: HostAddress6 -> String
 showHostAddress6 (a, b, c, d) =
   (L.intercalate ":" . map (`showHex` "")) [p1, p2, p3, p4, p5, p6, p7, p8]
@@ -95,17 +105,17 @@ showHostAddress6 (a, b, c, d) =
   (d', p8) = d `quotRem` 65536
   (_, p7)  = d' `quotRem` 65536
 
--- | Describe a Socket address on the SOCKS protocol.
+-- | Type representing socket addresses under the SOCKS protocol.
 data SocksAddress = SocksAddress !SocksHostAddress !PortNumber
   deriving (Eq, Ord, Show)
 
--- | Type of reply on the SOCKS protocol.
+-- | Type representing replies under the SOCKS protocol.
 data SocksReply =
     SocksReplySuccess
   | SocksReplyError SocksError
   deriving (Eq, Data, Ord, Show, Typeable)
 
--- | SOCKS error that can be received or sent.
+-- | Type representing SOCKS errors that can be received or sent.
 data SocksError =
     SocksErrorGeneralServerFailure
   | SocksErrorConnectionNotAllowedByRule
@@ -118,10 +128,11 @@ data SocksError =
   | SocksErrorOther Word8
   deriving (Eq, Data, Ord, Show, Typeable)
 
--- | Exception returned when using a SOCKS version that is not supported.
---
--- This package only implements Version 5.
-data SocksVersionNotSupported = SocksVersionNotSupported
+-- | Type representing exceptions.
+data SocksVersionNotSupported =
+    SocksVersionNotSupported
+    -- ^ The SOCKS protocol version is not supported. This library only
+    -- implements SOCKS Protocol Version 5.
   deriving (Data, Show, Typeable)
 
 instance Exception SocksError
