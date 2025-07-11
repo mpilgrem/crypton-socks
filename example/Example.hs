@@ -1,5 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+{- |
+Module      : Main
+License     : BSD-style
+Copyright   : (c) 2010-2019 Vincent Hanquez <vincent@snarc.org>
+Stability   : experimental
+Portability : unknown
+
+An example application.
+-}
+
 module Main
   ( main
   ) where
