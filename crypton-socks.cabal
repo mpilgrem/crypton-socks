@@ -6,8 +6,8 @@ cabal-version: 1.18
 
 name:           crypton-socks
 version:        0.6.2
-synopsis:       Socks proxy (ver 5)
-description:    Socks proxy (version 5) implementation.
+synopsis:       SOCKS Protocol Version 5
+description:    A library implementing SOCKS Protocol Version 5.
 category:       Network
 stability:      experimental
 homepage:       http://github.com/mpilgrem/socks5

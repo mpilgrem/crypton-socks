@@ -2,9 +2,9 @@ spec-version: 0.36.0 # Avoid legacy behaviour of Hpack
 
 name: crypton-socks
 version: 0.6.2
-synopsis: Socks proxy (ver 5)
+synopsis: SOCKS Protocol Version 5
 description: |
-  Socks proxy (version 5) implementation.
+  A library implementing SOCKS Protocol Version 5.
 copyright: Vincent Hanquez <vincent@snarc.org>
 author: Vincent Hanquez <vincent@snarc.org>
 maintainer:
