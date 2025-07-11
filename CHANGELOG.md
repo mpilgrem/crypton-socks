@@ -20,6 +20,7 @@ and this project adheres to the
   comprise only ASCII characters. Domain names that include other Unicode code
   points should be Punycode encoded.
 * Remove dependency on the `basement` package.
+* Deprecate `defaultSocksConfFromSockAddr`, soft deprecated from 22 April 2019.
 
 ## 0.6.1
 
