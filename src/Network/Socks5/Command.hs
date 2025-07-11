@@ -2,11 +2,11 @@
 {-# LANGUAGE ViewPatterns      #-}
 
 {- |
--- Module      : Network.Socks5.Command
--- License     : BSD-style
--- Maintainer  : Vincent Hanquez <vincent@snarc.org>
--- Stability   : experimental
--- Portability : unknown
+Module      : Network.Socks5.Command
+License     : BSD-style
+Copyright   : (c) 2010-2019 Vincent Hanquez <vincent@snarc.org>
+Stability   : experimental
+Portability : unknown
 -}
 
 module Network.Socks5.Command

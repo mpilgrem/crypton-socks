@@ -5,7 +5,7 @@
 {- |
 Module      : Network.Socks5.Parse
 License     : BSD-style
-Maintainer  : Vincent Hanquez <vincent@snarc.org>
+Copyright   : (c) 2010-2019 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : portable
 
